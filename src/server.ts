@@ -12,23 +12,22 @@ import fs from "fs";
   // Use the body parser middleware for post requests
   app.use(bodyParser.json());
 
-  app.get( "/filteredimage", async ( req, res ) => {
+  app.get( "/filteredimage", async ( req : express.Request , res : express.Response ) => {
 
-    let {image_url} = req.query;
-    // check to make sure the image url is set
-    if (!image_url) { 
-      // respond with an error if not
-      return res.status(400).send(`Image URL is required`);
-    }
-    let filteredimage =await filterImageFromURL(image_url);
+      let image_url: string = req.query;
+      // check to make sure the image url is set
+      if (!image_url) { 
+        return res.sendStatus(404).send("Image url is required");
+      }
+      let filteredimage =await filterImageFromURL(image_url);
 
-    res.status(200).sendFile(filteredimage);
-      fs.readdir(__dirname+'/util/tmp', (err,files)=>{ deleteLocalFiles(files)  }
-      )
+      res.sendStatus(200).sendFile(filteredimage);
+        fs.readdir(__dirname+'/util/tmp', (err,files)=>{ deleteLocalFiles(files)  }
+        )
   } );
   
-  app.get( "/", async ( req, res ) => {
-    res.status(200).send("Please try GET /filteredimage?image_url={{}}")
+  app.get( "/", async ( req : express.Request , res : express.Response ) => {
+      res.status(200).send("Please try GET /filteredimage?image_url={{}}")
   } );
 
   // Start the Server
