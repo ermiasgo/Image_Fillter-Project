@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
 import { emitWarning } from 'process';
 import fs from "fs";
+import { ClientRequest } from 'http';
 
 (async () => {
   // Init the Express application
@@ -14,14 +15,15 @@ import fs from "fs";
 
   app.get( "/filteredimage", async ( req : express.Request , res : express.Response ) => {
 
-      let image_url: string = req.query;
+      let {image_url} = req.query;
+      console.log("Image Url--->>"+image_url);
       // check to make sure the image url is set
       if (!image_url) { 
-        return res.sendStatus(404).send("Image url is required");
+        return res.send(404);
       }
       let filteredimage =await filterImageFromURL(image_url);
 
-      res.sendStatus(200).sendFile(filteredimage);
+      res.send(200).sendFile(filteredimage);
         fs.readdir(__dirname+'/util/tmp', (err,files)=>{ deleteLocalFiles(files)  }
         )
   } );
